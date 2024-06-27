@@ -54,7 +54,7 @@
 // }
 
 // export default App;
-import React from 'react';
+// import React from 'react';
 import catImage from '/projects/amplify-vite-react-template/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
 
 function App() {
