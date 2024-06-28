@@ -8,11 +8,6 @@ backend:
         - aws s3 cp s3://amplify-d3tvty808zfcjf-ma-amplifydataamplifycodege-o6mwyb4yj1zc/cat.jpg .
 frontend:
   phases:
-    install:
-      runtime-versions:
-        nodejs: 14.x
-      commands:
-        - npm install --save-dev @types/testing-library__react @types/jest
     build:
       commands:
         - npm run build
