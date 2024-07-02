@@ -1,9 +1,9 @@
-//  this is the original front end from the tutorial
+// //  this is the original front end from the tutorial
 
 // import { Authenticator } from '@aws-amplify/ui-react'
 // import '@aws-amplify/ui-react/styles.css'
 // import { useEffect, useState } from "react";
-// import type { Schema } from "../amplify/data/resource";
+// import type { Schema } from "/amplify/data/resource";
 // import { generateClient } from "aws-amplify/data";
 
 // const client = generateClient<Schema>();

@@ -10,12 +10,17 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      // Add the isDone field as a boolean
+      isDone: a.boolean(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
 
+/**
+ * Defines the data model schema and authorization modes for the application.
+ */
 export const data = defineData({
   schema,
   authorizationModes: {

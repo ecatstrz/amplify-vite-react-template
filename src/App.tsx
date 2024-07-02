@@ -1,13 +1,34 @@
-// export default App;
-// import React from 'react';
-import catImage from './assets/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
-// import catImage from 's3://amplify-d3tvty808zfcjf-ma-amplifydataamplifycodege-o6mwyb4yj1zc/cat.jpg';
+// import catImage from './assets/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
 
+// /**
+//  * The main App component that renders the application.
+//  */
+// function App() {
+//   return (
+//     <div className="App">
+//       <img src={catImage} alt="Cat" />
+//     </div>
+//   );
+// }
+
+// export default App;
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import catImage from './assets/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
+
+/**
+ * The main App component that renders the application.
+ */
 function App() {
   return (
-    <div className="App">
-      <img src={catImage} alt="Cat" />
-    </div>
+    <Authenticator>
+      {({ signOut }) => (
+        <div className="App">
+          <img src={catImage} alt="Cat" />
+          <button onClick={signOut}>Sign out</button>
+        </div>
+      )}
+    </Authenticator>
   );
 }
 
