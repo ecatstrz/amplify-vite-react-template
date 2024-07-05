@@ -1,30 +1,30 @@
-// import catImage from './assets/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
-
-// /**
-//  * The main App component that renders the application.
-//  */
-// function App() {
-//   return (
-//     <div className="App">
-//       <img src={catImage} alt="Cat" />
-//     </div>
-//   );
-// }
-
-// export default App;
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import catImage from './assets/1.jpg';
+import catImage1 from './assets/1.jpg';
+import catImage2 from './assets/2.jpg';
+import React from 'react';
 
 /**
  * The main App component that renders the application.
  */
 function App() {
+  const [selectedOption, setSelectedOption] = React.useState('');
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   return (
     <Authenticator>
       {({ signOut }) => (
         <div className="App">
-          <img src={catImage} alt="Cat" />
+          <select value={selectedOption} onChange={handleOptionChange}>
+            <option value="">Select an option</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+          </select>
+          {selectedOption === '1' && <img src={catImage1} alt="Cat" />}
+          {selectedOption === '2' && <img src={catImage2} alt="Cat" />}
           <button onClick={signOut}>Sign out</button>
         </div>
       )}

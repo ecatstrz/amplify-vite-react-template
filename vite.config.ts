@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['/projects/amplify-vite-react-template/src/assets/1.jpg'],
+      external: ['/projects/amplify-vite-react-template/src/assets/1.jpg', '/projects/amplify-vite-react-template/src/assets/2.jpg'],
     },
   },
 })
