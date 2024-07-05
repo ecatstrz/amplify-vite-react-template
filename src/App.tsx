@@ -10,7 +10,7 @@ import React from 'react';
 function App() {
   const [selectedOption, setSelectedOption] = React.useState('');
 
-  const handleOptionChange = (event) => {
+  const handleOptionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setSelectedOption(event.target.value);
   };
 
