@@ -14,7 +14,7 @@
 // export default App;
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import catImage from './assets/c2ba9d93-5267-4ac5-9f61-78c83a0d8667.jpg';
+import catImage from './assets/1.jpg';
 
 /**
  * The main App component that renders the application.
