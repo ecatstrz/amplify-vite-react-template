@@ -7,6 +7,8 @@ import React from 'react';
 /**
  * The main App component that renders the application.
  */
+
+// I am adding a comment just to have the thing to commit to redeploy again
 function App() {
   const [selectedOption, setSelectedOption] = React.useState('');
 
