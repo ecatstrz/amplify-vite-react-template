@@ -1,6 +1,6 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 
@@ -9,6 +9,7 @@ const client = generateClient<Schema>();
 function App() {
   const [selectedCat, setSelectedCat] = useState<Schema["Cat"]["type"] | null>(null);
   const [cats, setCats] = useState<Array<Schema["Cat"]["type"]>>([]);
+  const [showHome, setShowHome] = useState<boolean>(true);
 
   useEffect(() => {
     const subscription = client.models.Cat.observeQuery().subscribe({
@@ -59,20 +60,29 @@ function App() {
     <Authenticator>
       {({ signOut }) => (
         <div className="App">
-          <select value={selectedCat?.id || ''} onChange={(e) => setSelectedCat(cats.find((cat) => cat.id === e.target.value) || null)}>
-            <option value="">Select a cat</option>
-            {cats.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-          {selectedCat && (
-            <div>
-              <p>{selectedCat.name}</p>
-              <img src={selectedCat.imageUrl || ''} alt="Cat" />
-            </div>
+          {showHome ? (
+            <>
+              <select value={selectedCat?.id || ''} onChange={(e) => setSelectedCat(cats.find((cat) => cat.id === e.target.value) || null)}>
+                <option value="">Select a cat</option>
+                {cats.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              {selectedCat && (
+                <div>
+                  <p>{selectedCat.name}</p>
+                  <img src={selectedCat.imageUrl || ''} alt="Cat" />
+                </div>
+              )}
+              <button onClick={() => setShowHome(false)}>+ new cat</button>
+              <button onClick={signOut}>Sign out</button>
+            </>
+          ) : (
+            <>
+              <button onClick={createCat}>Create New Cat</button>
+              <button onClick={() => setShowHome(true)}>Return to Home</button>
+            </>
           )}
-          <button onClick={signOut}>Sign out</button>
-          <button onClick={createCat}>+ new cat</button>
           <ul>
             {cats.map((cat) => (
               <li key={cat.id}>
