@@ -3,6 +3,10 @@ import '@aws-amplify/ui-react/styles.css';
 import catImage1 from './assets/1.jpg';
 import catImage2 from './assets/2.jpg';
 import React, { useEffect, useState } from 'react';
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../amplify/data/resource";
+
+const client = generateClient<Schema>();
 
 /**
  * The main App component that renders the application.
@@ -12,28 +16,25 @@ import React, { useEffect, useState } from 'react';
 // I am trying to make things deploy again
 function App() {
   const [selectedOption, setSelectedOption] = React.useState('');
-  const [catImageUrl, setCatImageUrl] = useState('');
+  const [cats, setCats] = useState<Array<Schema["Cat"]["type"]>>([]);
 
   const handleOptionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setSelectedOption(event.target.value);
   };
 
   useEffect(() => {
-    const fetchCatData = async () => {
-      try {
-        const response = await fetch('/api/cats');
-        const data = await response.json();
-        const cat = data.find((item: { __typename: string; }) => item.__typename === 'Cat');
-        if (cat) {
-          setCatImageUrl(cat.imageUrl);
-        }
-      } catch (error) {
-        console.error('Error fetching cat data:', error);
-      }
-    };
-
-    fetchCatData();
+    client.models.Cat.observeQuery().subscribe({
+      next: (data) => setCats([...data.items]),
+    });
   }, []);
+
+  function createCat() {
+    const content = window.prompt("Cat content");
+    const imageUrl = window.prompt("Cat image URL");
+    if (content && imageUrl) {
+      client.models.Cat.create({ content, imageUrl });
+    }
+  }
 
   return (
     <Authenticator>
@@ -46,8 +47,16 @@ function App() {
           </select>
           {selectedOption === '1' && <img src={catImage1} alt="Cat" />}
           {selectedOption === '2' && <img src={catImage2} alt="Cat" />}
-          <img src={catImageUrl} alt="Cat" />
           <button onClick={signOut}>Sign out</button>
+          <button onClick={createCat}>+ new cat</button>
+          <ul>
+          {cats.map((cat) => (
+            <li key={cat.id}>
+              <p>{cat.content}</p>
+              {cat.imageUrl && <img src={cat.imageUrl} alt="Cat" />}
+            </li>
+          ))}
+        </ul>
         </div>
       )}
     </Authenticator>
