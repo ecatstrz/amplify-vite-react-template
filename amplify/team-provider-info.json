@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-catapp-dev-4ade4-authRole",
+      "UnauthRoleArn": "arn:aws:iam::339712953518:role/amplify-catapp-dev-4ade4-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::339712953518:role/amplify-catapp-dev-4ade4-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-catapp-dev-4ade4-deployment",
+      "UnauthRoleName": "amplify-catapp-dev-4ade4-unauthRole",
+      "StackName": "amplify-catapp-dev-4ade4",
+      "StackId": "arn:aws:cloudformation:us-east-1:339712953518:stack/amplify-catapp-dev-4ade4/62409cd0-3f06-11ef-b8f4-0affc65a0f59",
+      "AmplifyAppId": "d89pyxd1zc8v8"
+    },
+    "categories": {
+      "api": {
+        "catapp": {}
+      }
+    }
+  }
+}

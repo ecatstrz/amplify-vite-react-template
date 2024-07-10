@@ -1,0 +1,7 @@
+{
+  "dev": {
+    "configLevel": "project",
+    "useProfile": false,
+    "awsConfigFilePath": "/home/mde-user/.amplify/awscloudformation/lZG2Takm8l"
+  }
+}

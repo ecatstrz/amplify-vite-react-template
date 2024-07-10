@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "catapp",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "S3DeploymentBucket": "amplify-catapp-dev-4ade4-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/1687deb7823b3fafad860a2acf896595aedffa07"
+}
