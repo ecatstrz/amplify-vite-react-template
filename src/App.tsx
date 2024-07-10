@@ -29,10 +29,10 @@ function App() {
   }, []);
 
   function createCat() {
-    const content = window.prompt("Cat content");
+    const name = window.prompt("Cat name");
     const imageUrl = window.prompt("Cat image URL");
-    if (content && imageUrl) {
-      client.models.Cat.create({ content, imageUrl });
+    if (name && imageUrl) {
+      client.models.Cat.create({ name, imageUrl });
     }
   }
 
@@ -52,7 +52,7 @@ function App() {
           <ul>
           {cats.map((cat) => (
             <li key={cat.id}>
-              <p>{cat.content}</p>
+              <p>{cat.name}</p>
               {cat.imageUrl && <img src={cat.imageUrl} alt="Cat" />}
             </li>
           ))}
