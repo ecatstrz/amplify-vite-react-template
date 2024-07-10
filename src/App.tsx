@@ -6,19 +6,9 @@ import type { Schema } from "../amplify/data/resource";
 
 const client = generateClient<Schema>();
 
-/**
- * The main App component that renders the application.
- */
-
-// this is a different branch
-// I am trying to make things deploy again
 function App() {
-  const [selectedOption, setSelectedOption] = React.useState('');
+  const [selectedCat, setSelectedCat] = useState<Schema["Cat"]["type"] | null>(null);
   const [cats, setCats] = useState<Array<Schema["Cat"]["type"]>>([]);
-
-  const handleOptionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-    setSelectedOption(event.target.value);
-  };
 
   useEffect(() => {
     const subscription = client.models.Cat.observeQuery().subscribe({
@@ -28,7 +18,6 @@ function App() {
     const handleCreateCat = async () => {
       const confirmed = await createCat();
       if (confirmed) {
-        // Refresh the cats list after creating a new cat
         subscription.unsubscribe();
         const newSubscription = client.models.Cat.observeQuery().subscribe({
           next: (data) => setCats([...data.items]),
@@ -70,16 +59,16 @@ function App() {
     <Authenticator>
       {({ signOut }) => (
         <div className="App">
-          <select value={selectedOption} onChange={handleOptionChange}>
+          <select value={selectedCat?.id || ''} onChange={(e) => setSelectedCat(cats.find((cat) => cat.id === e.target.value) || null)}>
             <option value="">Select a cat</option>
             {cats.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
-          {selectedOption && (
+          {selectedCat && (
             <div>
-              <p>{cats.find((cat) => cat.id === selectedOption)?.name}</p>
-              <img src={cats.find((cat) => cat.id === selectedOption)?.imageUrl || ''} alt="Cat" />
+              <p>{selectedCat.name}</p>
+              <img src={selectedCat.imageUrl || ''} alt="Cat" />
             </div>
           )}
           <button onClick={signOut}>Sign out</button>
