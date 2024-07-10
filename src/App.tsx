@@ -1,4 +1,4 @@
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { useEffect, useState } from 'react';
 import { generateClient } from "aws-amplify/data";
@@ -9,60 +9,36 @@ const client = generateClient<Schema>();
 function App() {
   const [selectedCat, setSelectedCat] = useState<Schema["Cat"]["type"] | null>(null);
   const [cats, setCats] = useState<Array<Schema["Cat"]["type"]>>([]);
-  const [showHome, setShowHome] = useState<boolean>(true);
+  const [showCreateCatView, setShowCreateCatView] = useState<boolean>(false);
   const [showCatDetails, setShowCatDetails] = useState<boolean>(false);
+  const [newCatName, setNewCatName] = useState<string>('');
+  const [newCatImageUrl, setNewCatImageUrl] = useState<string>('');
+  const { authStatus } = useAuthenticator((context) => [context.authStatus]);
 
   useEffect(() => {
-    const subscription = client.models.Cat.observeQuery().subscribe({
-      next: (data) => setCats([...data.items]),
-    });
+    if (authStatus === 'authenticated') {
+      const subscription = client.models.Cat.observeQuery().subscribe({
+        next: (data) => setCats([...data.items]),
+      });
 
-    const handleCreateCat = async () => {
-      const confirmed = await createCat();
-      if (confirmed) {
-        subscription.unsubscribe();
-        const newSubscription = client.models.Cat.observeQuery().subscribe({
-          next: (data) => setCats([...data.items]),
-        });
-        return () => newSubscription.unsubscribe();
-      }
-    };
+      return () => subscription.unsubscribe();
+    }
+  }, [authStatus]);
 
-    handleCreateCat();
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  function createCat(): Promise<boolean> {
-    return new Promise((resolve) => {
-      const name = window.prompt("Cat name");
-      if (!name) {
-        resolve(false);
-        return;
-      }
-
-      const imageUrl = window.prompt("Cat image URL");
-      if (!imageUrl) {
-        resolve(false);
-        return;
-      }
-
-      const confirmed = window.confirm(`Create a new cat with name "${name}" and image URL "${imageUrl}"?`);
-      if (confirmed) {
-        client.models.Cat.create({ name, imageUrl });
-        setShowHome(true); // Navigate back to home page after creating a new cat
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    });
-  }
+  const handleCreateCat = async () => {
+    if (newCatName && newCatImageUrl) {
+      await client.models.Cat.create({ name: newCatName, imageUrl: newCatImageUrl });
+      setNewCatName('');
+      setNewCatImageUrl('');
+      setShowCreateCatView(false);
+    }
+  };
 
   return (
     <Authenticator>
       {({ signOut }) => (
         <div className="App">
-          {showHome ? (
+          {authStatus === 'authenticated' ? (
             <>
               <select value={selectedCat?.id || ''} onChange={(e) => setSelectedCat(cats.find((cat) => cat.id === e.target.value) || null)}>
                 <option value="">Select a cat</option>
@@ -71,21 +47,38 @@ function App() {
                 ))}
               </select>
               <button onClick={() => setShowCatDetails(true)}>View Selected Cat</button>
-              <button onClick={() => setShowHome(false)}>+ new cat</button>
+              <button onClick={() => setShowCreateCatView(true)}>+ new cat</button>
               <button onClick={signOut}>Sign out</button>
+
+              {showCreateCatView && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Cat name"
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Cat image URL"
+                    value={newCatImageUrl}
+                    onChange={(e) => setNewCatImageUrl(e.target.value)}
+                  />
+                  <button onClick={handleCreateCat}>Create New Cat</button>
+                  <button onClick={() => setShowCreateCatView(false)}>Cancel</button>
+                </>
+              )}
+
+              {showCatDetails && selectedCat && (
+                <div>
+                  <p>{selectedCat.name}</p>
+                  <img src={selectedCat.imageUrl || ''} alt="Cat" />
+                  <button onClick={() => setShowCatDetails(false)}>Back to Home</button>
+                </div>
+              )}
             </>
           ) : (
-            <>
-              <button onClick={createCat}>Create New Cat</button>
-              <button onClick={() => setShowHome(true)}>Return to Home</button>
-            </>
-          )}
-          {showCatDetails && selectedCat && (
-            <div>
-              <p>{selectedCat.name}</p>
-              <img src={selectedCat.imageUrl || ''} alt="Cat" />
-              <button onClick={() => setShowCatDetails(false)}>Back to Home</button>
-            </div>
+            <div>Loading...</div>
           )}
         </div>
       )}
