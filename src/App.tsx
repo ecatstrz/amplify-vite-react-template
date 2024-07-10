@@ -10,6 +10,7 @@ function App() {
   const [selectedCat, setSelectedCat] = useState<Schema["Cat"]["type"] | null>(null);
   const [cats, setCats] = useState<Array<Schema["Cat"]["type"]>>([]);
   const [showHome, setShowHome] = useState<boolean>(true);
+  const [showCatDetails, setShowCatDetails] = useState<boolean>(false);
 
   useEffect(() => {
     const subscription = client.models.Cat.observeQuery().subscribe({
@@ -69,12 +70,7 @@ function App() {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-              {selectedCat && (
-                <div>
-                  <p>{selectedCat.name}</p>
-                  <img src={selectedCat.imageUrl || ''} alt="Cat" />
-                </div>
-              )}
+              <button onClick={() => setShowCatDetails(true)}>View Selected Cat</button>
               <button onClick={() => setShowHome(false)}>+ new cat</button>
               <button onClick={signOut}>Sign out</button>
             </>
@@ -84,14 +80,13 @@ function App() {
               <button onClick={() => setShowHome(true)}>Return to Home</button>
             </>
           )}
-          <ul>
-            {cats.map((cat) => (
-              <li key={cat.id}>
-                <p>{cat.name}</p>
-                {cat.imageUrl && <img src={cat.imageUrl} alt="Cat" />}
-              </li>
-            ))}
-          </ul>
+          {showCatDetails && selectedCat && (
+            <div>
+              <p>{selectedCat.name}</p>
+              <img src={selectedCat.imageUrl || ''} alt="Cat" />
+              <button onClick={() => setShowCatDetails(false)}>Back to Home</button>
+            </div>
+          )}
         </div>
       )}
     </Authenticator>
