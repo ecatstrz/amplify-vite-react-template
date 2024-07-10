@@ -1,7 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import catImage1 from './assets/1.jpg';
-import catImage2 from './assets/2.jpg';
 import React, { useEffect, useState } from 'react';
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
@@ -23,17 +21,49 @@ function App() {
   };
 
   useEffect(() => {
-    client.models.Cat.observeQuery().subscribe({
+    const subscription = client.models.Cat.observeQuery().subscribe({
       next: (data) => setCats([...data.items]),
     });
+
+    const handleCreateCat = async () => {
+      const confirmed = await createCat();
+      if (confirmed) {
+        // Refresh the cats list after creating a new cat
+        subscription.unsubscribe();
+        const newSubscription = client.models.Cat.observeQuery().subscribe({
+          next: (data) => setCats([...data.items]),
+        });
+        return () => newSubscription.unsubscribe();
+      }
+    };
+
+    handleCreateCat();
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  function createCat() {
-    const name = window.prompt("Cat name");
-    const imageUrl = window.prompt("Cat image URL");
-    if (name && imageUrl) {
-      client.models.Cat.create({ name, imageUrl });
-    }
+  function createCat(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const name = window.prompt("Cat name");
+      if (!name) {
+        resolve(false);
+        return;
+      }
+
+      const imageUrl = window.prompt("Cat image URL");
+      if (!imageUrl) {
+        resolve(false);
+        return;
+      }
+
+      const confirmed = window.confirm(`Create a new cat with name "${name}" and image URL "${imageUrl}"?`);
+      if (confirmed) {
+        client.models.Cat.create({ name, imageUrl });
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
   }
 
   return (
@@ -41,22 +71,27 @@ function App() {
       {({ signOut }) => (
         <div className="App">
           <select value={selectedOption} onChange={handleOptionChange}>
-            <option value="">Select an option</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
+            <option value="">Select a cat</option>
+            {cats.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
           </select>
-          {selectedOption === '1' && <img src={catImage1} alt="Cat" />}
-          {selectedOption === '2' && <img src={catImage2} alt="Cat" />}
+          {selectedOption && (
+            <div>
+              <p>{cats.find((cat) => cat.id === selectedOption)?.name}</p>
+              <img src={cats.find((cat) => cat.id === selectedOption)?.imageUrl || ''} alt="Cat" />
+            </div>
+          )}
           <button onClick={signOut}>Sign out</button>
           <button onClick={createCat}>+ new cat</button>
           <ul>
-          {cats.map((cat) => (
-            <li key={cat.id}>
-              <p>{cat.name}</p>
-              {cat.imageUrl && <img src={cat.imageUrl} alt="Cat" />}
-            </li>
-          ))}
-        </ul>
+            {cats.map((cat) => (
+              <li key={cat.id}>
+                <p>{cat.name}</p>
+                {cat.imageUrl && <img src={cat.imageUrl} alt="Cat" />}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </Authenticator>
