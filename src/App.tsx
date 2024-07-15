@@ -50,7 +50,7 @@ function App() {
       const confirmed = window.confirm(`Create a new cat with name "${name}" and image URL "${imageUrl}"?`);
       if (confirmed) {
         client.models.Cat.create({ name, imageUrl });
-        setShowHome(true); // Navigate back to home page after creating a new cat
+        setShowHome(true); // Navigate back to home page after creating a new cat extra comment need to deploy
         resolve(true);
       } else {
         resolve(false);
