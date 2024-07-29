@@ -11,6 +11,7 @@ Amplify.configure(outputs);
 /**
  * The entry point of the React application.
  * Renders the App component inside a React StrictMode component.
+ * deploying test change
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
