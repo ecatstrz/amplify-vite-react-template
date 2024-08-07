@@ -7,7 +7,7 @@ import ViewCat from './pages/ViewCat';
 import type { Schema } from "../amplify/data/resource";
 
 function App() {
-  const [showHome, setShowHome] = useState<boolean>(true);
+  const [showHome] = useState<boolean>(true);
   const [selectedCat, setSelectedCat] = useState<Schema["Cat"]["type"] | null>(null);
 
   return (
